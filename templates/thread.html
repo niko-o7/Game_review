@@ -7,8 +7,8 @@
     <h1> {{thread.title}} </h1>
 
     <p> Post by: {{ author }} </p>
-    <p> Genres: {{thread.genres }}</p>
-    <p> Rating: {{thread.grade}}/5</p>
+    <p> Genres: {{ thread.genres }}</p>
+    <p> Rating: {{ thread.grade }}/5</p>
 
     <h2>Review</h2>
     <p>{{ thread.review }}</p>
@@ -16,7 +16,7 @@
     {% if "user_id" in session and session["user_id"] == thread.user_id %}
     <p>
         <a href="/edit/{{ thread.thread_id }}">Edit</a>
-        <a href="/remove/{{thread.thread_id}}">Delete</a>
+        <a href="/remove/{{ thread.thread_id }}">Delete</a>
 
     </p>
     {% endif %}
