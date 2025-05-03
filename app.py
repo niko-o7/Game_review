@@ -6,6 +6,7 @@ import db
 import config
 import forum
 import users
+import secrets
 
 
 
@@ -55,6 +56,7 @@ def login():
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "Error: wrong username or password"
@@ -78,8 +80,13 @@ def reviewpage():
     except:
         return render_template("reviewpage.html")
 
+def check_csrf():
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+
 @app.route("/new_thread", methods=["POST"])
 def new_thread():
+    check_csrf()
     title = request.form["title"]
     genres = request.form.getlist("genres")
     grade = request.form.get("grade")
@@ -139,7 +146,7 @@ def add_comment(thread_id):
     thread = forum.get_thread(thread_id)
     return redirect("/thread/" + str(thread["thread_id"]))
 
-@app.route("/comment/Cint:comment_id>/delete", methods=["POST"])
+@app.route("/comment/<int:comment_id>/delete", methods=["POST"])
 def delete_comment(comment_id):
     forum.delete_comment(comment_id, session["user_id"])
     return redirect(request.referrer)

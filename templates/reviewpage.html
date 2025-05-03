@@ -48,6 +48,7 @@
         <input type="radio" name="grade" value="4" /> 4
         <input type="radio" name="grade" value="5" /> 5
     </p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
         Review: <br />
         <textarea name="review" rows="5" cols="40"></textarea>
