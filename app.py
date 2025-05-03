@@ -1,6 +1,6 @@
 from flask import Flask
 import sqlite3
-from flask import redirect, render_template, request, session, abort
+from flask import redirect, render_template, request, session, abort, make_response
 from werkzeug.security import generate_password_hash
 import db
 import config
@@ -139,7 +139,7 @@ def add_comment(thread_id):
     thread = forum.get_thread(thread_id)
     return redirect("/thread/" + str(thread["thread_id"]))
 
-@app.route("/comment/<int:comment_id>/delete", methods=["POST"])
+@app.route("/comment/Cint:comment_id>/delete", methods=["POST"])
 def delete_comment(comment_id):
     forum.delete_comment(comment_id, session["user_id"])
     return redirect(request.referrer)
@@ -152,7 +152,37 @@ def profile():
     if "user_id" not in session:
         return redirect("/login")
     user_id = session["user_id"]
-    username = session.get("username")
+    user = users.get_user(user_id)
     reviews = forum.user_reviews(user_id)
     reviewcount = forum.total_reviews(user_id)
-    return render_template("profile.html", username = username, reviews = reviews, reviewcount = reviewcount)
+    return render_template("profile.html", user=user, username = user["username"], reviews = reviews, reviewcount = reviewcount)
+
+@app.route("/add_image", methods=["GET", "POST"])
+def add_image():
+    #require_login()
+
+    if request.method == "GET":
+        return render_template("add_image.html")
+    
+    if request.method == "POST":
+        file = request.files["image"]
+        if not file.filename.endswith(".jpg"):
+            return "ERROR: wrong file type"
+        
+        image = file.read()
+        if len(image) > 100 * 1024:
+            return "ERROR: file size too large"
+        
+        user_id = session["user_id"]
+        users.update_image(user_id, image)
+        return redirect("/user/" + str(user_id))
+    
+@app.route("/image/<int:user_id>")
+def show_image(user_id):
+    image = users.get_image(user_id)
+    if not image:
+        abort(404)
+    
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response

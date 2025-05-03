@@ -20,6 +20,17 @@ def check_login(username, password):
         return None
     
 def get_user(user_id):
-    sql = "SELECT id, username FROM users WHERE id = ?"
+    sql = """SELECT id, username, image IS NOT NULL has_image
+            FROM users
+            WHERE id = ?"""
     user = db.query(sql, [user_id])
     return user[0] if user else None
+
+def get_image(user_id):
+    sql = "SELECT image FROM users WHERE id = ?"
+    image = db.query(sql, [user_id])
+    return image[0]["image"]
+
+def update_image(user_id, image):
+    sql = "UPDATE users SET image = ? WHERE id = ?"
+    db.execute(sql, [image, user_id])
