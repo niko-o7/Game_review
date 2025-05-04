@@ -1,3 +1,8 @@
+{% for message in get_flashed_messages() %}
+<p>
+    <b>{{ message }}</b>
+</p>
+{% endfor %}
 <form action="/add_image" method="post" enctype="multipart/form-data">
     <p>
         Image: <input type="file" name="image" accept=".jpg" />
