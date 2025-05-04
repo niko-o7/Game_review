@@ -166,7 +166,7 @@ def profile():
 
 @app.route("/add_image", methods=["GET", "POST"])
 def add_image():
-    #require_login()
+
 
     if request.method == "GET":
         return render_template("add_image.html")
