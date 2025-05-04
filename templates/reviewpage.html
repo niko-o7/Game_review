@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <link rel="stylesheet" href="/static/main.css">
-    <div class="header">
-        <title>Game reviews</title>
-    </div>
+    <title>Game reviews</title>
 </head>
+<body>
+
+<div class="page">
+    <p>
+        <a href="/{{ page - 1 }}">&lt;&lt;</a>
+        page {{ page }}/{{ page_count }}
+        <a href="/{{ page + 1 }}">&gt;&gt;</a>
+    </p>
+    <hr />
+</div>
+
 <div class="threads">
     {% for thread in threads %}
     <p>
         <a href="/thread/{{ thread.id }}"> {{ thread.title }} </a>
-
         <strong>Genres</strong> {{ thread.genres }}
         <strong>Rating</strong> {{ thread.grade }}
-
         <strong>Thoughts:</strong>
         {{ thread.review }}
-
     </p>
     {% if thread.user_id == session.user_id %}
     <p>
@@ -58,47 +63,42 @@
         <p>
             <label for="review">Review</label>: <br />
             <textarea name="review" rows="5" cols="40" maxlength="5000"></textarea>
-
         </p>
-
         <input type="submit" value="Send" />
-
-</form>
+    </form>
+    {% endif %}
 </div>
+
 <div class="search">
     <form action="/search" method="get">
         <p>
             Review search:
-            {% if query %}
-            <input type="text" name="query" value="{{ query }}" />
-            {% else %}
-            <input type="text" name="query" />
-            {% endif %}
+            <input type="text" name="query" {% if query %}value="{{ query }}"{% endif %} />
         </p>
         <input type="submit" value="Search" />
     </form>
-
-    {% if query %}
 </div>
+
+{% if query %}
 <hr />
 <h2>Search results</h2>
-
-<ul>
-{% for result in results %}
-    <li>
-        <a href="/thread/{{ result.thread_id }}">
-        {{result.thread_title}}
-        </a>
-        <br />
-        Posted by: {{ result.username }}
-    </li>
-{% endfor %}
-
-</ul>
-{% elif query %}
-<p>No results found for "{{ query }}"</p>
-
-
+    {% if results %}
+        <p>Found {{ total_results }} matches</p>
+        <ul>
+        {% for result in results %}
+            <li>
+                <a href="/thread/{{ result.thread_id }}">
+                {{ result.title }}
+                </a>
+                <br />
+                Posted by: {{ result.username }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found for "{{ query }}"</p>
+    {% endif %}
 {% endif %}
-{% endif %}
+
+</body>
 </html>

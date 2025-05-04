@@ -1,14 +1,21 @@
 import sqlite3
 import db
 
-def get_threads():
+def get_threads(page, page_size):
     sql= """SELECT t.*, users.username
             FROM threads t
             JOIN users ON t.user_id = users.id
             GROUP BY t.id
             ORDER BY t.id DESC
+            LIMIT ? OFFSET ?
             """
-    return db.query(sql)
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
+
+def thread_count():
+    sql = "SELECT COUNT(*) FROM threads"
+    return db.query(sql)[0][0]
 
 def add_thread(title, genres, grade, review, user_id):
     sql = "INSERT INTO threads (title, genres, grade, review, user_id) VALUES (?,?,?,?,?)"
@@ -42,16 +49,22 @@ def remove_thread(thread_id):
     sql = "DELETE FROM threads WHERE id = ?"
     db.execute(sql, [thread_id])
 
-def search(query):
-    sql= """SELECT t.id as thread_id, t.title, u.username
+def search(query, page=1, per_page=15):
+    offset = (page - 1) * per_page
+
+    sql= """SELECT t.id as thread_id, t.title, u.username, COUNT(*) OVER() as total_results
             FROM threads t
             JOIN users u ON t.user_id = u.id
             WHERE t.title LIKE ? OR t.genres LIKE ? OR t.review LIKE ?
             ORDER BY t.id DESC
+            LIMIT ? OFFSET ?
         """
     search = f"%{query}%"
-    results = db.query(sql, [search, search, search])
-    return results
+    results = db.query(sql, [search, search, search, per_page, offset])
+    if not results:
+        return []
+    total_results = results[0]["total_results"]
+    return results, total_results
 
 
 def add_comment(thread_id, user_id, content):

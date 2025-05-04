@@ -8,7 +8,7 @@ import forum
 import users
 import secrets
 import markupsafe
-
+import math
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -84,12 +84,26 @@ def logout():
 #Reviews
 
 @app.route("/reviewpage")
-def reviewpage():
+@app.route("/<int:page>")
+def reviewpage(page=1):
+    page_size = 15
+    thread_count = forum.thread_count()
+    page_count = math.ceil(thread_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/reviewpage/1")
+    if page > page_count:
+        return redirect(f"/reviewpage/{page_count}")
+
     try:
-        threads = forum.get_threads()
-        return render_template("reviewpage.html", threads=threads)
+        threads = forum.get_threads(page, page_size)
+        return render_template("reviewpage.html", threads=threads, page=page, page_count=page_count)
     except:
         return render_template("reviewpage.html")
+
+
+
 
 def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
@@ -144,8 +158,13 @@ def remove_thread(thread_id):
 @app.route("/search")
 def search():
     query = request.args.get("query", "").strip()
-    results = forum.search(query) if query else []
-    return render_template("reviewpage.html", query=query, results=results, threads=forum.get_threads())
+    page = request.args.get("page", 1, type=int)
+    per_page = 15
+    if query:
+        results, total_results = forum.search(query, page=page, per_page=per_page)
+    else:
+        results = []
+    return render_template("reviewpage.html", query=query, total_results=total_results, threads=results, current_page=page, total_pages=(total_results + per_page - 1) // per_page)
 
 
 #comment section
