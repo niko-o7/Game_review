@@ -5,6 +5,12 @@
     <title> Register </title>
 </head>
 
+{% for message in get_flashed_messages() %}
+<p>
+    <b>{{ message }}</b>
+</p>
+{% endfor %}
+
 <body>
     <form action="/create" method="post">
         <p>

@@ -34,7 +34,8 @@ def create():
     firstpassword = request.form["password1"]
     secondpassword = request.form["password2"]
     if firstpassword != secondpassword:
-        return "Error: Given passwords don't match"
+        flash("Error: Given passwords don't match")
+        return redirect("/register")
 
     try:
         users.create_user(username, firstpassword)
@@ -59,13 +60,15 @@ def login():
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return "Error: wrong username or password"
+            flash("Error: wrong username or password")
+            return redirect("/")
 
 @app.route("/logout")
 def logout():
     if "user_id" in session:
         del session["user_id"]
         del session["username"]
+    flash("Logged out")
     return redirect("/")
 
 

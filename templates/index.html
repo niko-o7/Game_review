@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 
+{% for message in get_flashed_messages() %}
+<p>
+    <b>{{ message }}</b>
+</p>
+{% endfor %}
+
 <head>
     <title>Login</title>
 </head>
