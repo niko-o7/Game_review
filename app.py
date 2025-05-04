@@ -7,7 +7,7 @@ import config
 import forum
 import users
 import secrets
-
+import markupsafe
 
 
 app = Flask(__name__)
@@ -24,25 +24,33 @@ def index():
 #REGISTRATION
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    filled = {"username": ""}
+    return render_template("register.html", filled=filled)
 
 @app.route("/create", methods=["POST"])
 def create():
 
     
     username = request.form["username"]
+    filled = {"username": username}
+
+    if len(username) > 16:
+        flash("Username has to be less than 16 characters")
+        return render_template("register.html", filled=filled)
+
     firstpassword = request.form["password1"]
     secondpassword = request.form["password2"]
+
     if firstpassword != secondpassword:
         flash("Error: Given passwords don't match")
-        return redirect("/register")
+        return render_template("register.html", filled=filled)
 
     try:
         users.create_user(username, firstpassword)
         
     except sqlite3.IntegrityError:
         flash("Error: username already exists")
-        return redirect("/register")
+        return render_template("register.html", filled=filled)
     
     flash("Account created!")
     return redirect("/")
@@ -106,7 +114,7 @@ def view_thread(thread_id):
     thread = forum.get_thread(thread_id)
     if not thread:
         abort(404)
-    #author = users.get_user(thread["user_id"])
+    
     comments = forum.get_comments(thread_id)
     return render_template("thread.html", thread=thread, author=thread["author_username"], comments=comments or [])
 
@@ -198,3 +206,10 @@ def show_image(user_id):
     response = make_response(bytes(image))
     response.headers.set("Content-Type", "image/jpeg")
     return response
+
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)

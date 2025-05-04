@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{thread.title}}</title>
+    <title>{{ thread.title }}</title>
 </head>
 <body>
-    <h1> {{thread.title}} </h1>
+    <h1> {{ thread.title }} </h1>
 
     <p> Post by: {{ author }} </p>
     <p> Genres: {{ thread.genres }}</p>
     <p> Rating: {{ thread.grade }}/5</p>
 
     <h2>Review</h2>
-    <p>{{ thread.review }}</p>
+    <p>{{ thread.review | show_lines }}</p>
 
     {% if "user_id" in session and session["user_id"] == thread.user_id %}
     <p>
@@ -25,25 +25,25 @@
 
     <h3>Comments</h3>
     {% if "user_id" in session %}
-    <form method="POST" action="/thread/{{ thread.thread_id}}/comment">
+    <form method="POST" action="/thread/{{ thread.thread_id }}/comment">
         <textarea name="content" rows="5"></textarea>
         <button type="submit">Submit</button>
 
     </form>
     {% else %}
-    <p><a href="{{ url_for('login') }}">Log in</a> to make a comment</p>
+    <p><a href="/login">Log in</a> to make a comment</p>
     {% endif %}
 
     {% for comment in comments %}
     <p>
-        <strong>{{comment.username}}</strong>
-        {{ comment.created_at}}
+        <strong>{{ comment.username }}</strong>
+        {{ comment.created_at }}
         {% if "user_id" in session and session["user_id"] == comment.user_id %}
         <form method="POST" action="/comment/{{ comment.id }}/delete">
             <button type="submit" class="delete-btn">Delete</button>
         </form>
         {% endif %}
-        <p> {{comment.content}} </p>
+        <p> {{ comment.content | show_lines }} </p>
         
         {% else %}
         <p> No comments yet! </p>
