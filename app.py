@@ -1,6 +1,6 @@
 from flask import Flask
 import sqlite3
-from flask import redirect, render_template, request, session, abort, make_response
+from flask import redirect, render_template, request, session, abort, make_response, flash
 from werkzeug.security import generate_password_hash
 import db
 import config
@@ -35,16 +35,16 @@ def create():
     secondpassword = request.form["password2"]
     if firstpassword != secondpassword:
         return "Error: Given passwords don't match"
-    #password_hash = generate_password_hash(firstpassword)
-    
+
     try:
         users.create_user(username, firstpassword)
-        #sql = "INSERT INTO users (username, password_hash) VALUES (?,?)"
-        #db.execute(sql, [username, password_hash])
+        
     except sqlite3.IntegrityError:
-        return "Error: username already exists"
+        flash("Error: username already exists")
+        return redirect("/register")
     
-    return "Account created"
+    flash("Account created!")
+    return redirect("/")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
