@@ -5,7 +5,7 @@
     <title>{{ username }}</title>
 
     {% if user.has_image %}
-        <img src="/image/{{ user.id }}" />
+        <img src="/image/{{ user.id }}" alt="{{ user.username }}`s picture" />
     {% endif %}
 
     <h3> Reviews: </h3>
@@ -16,12 +16,12 @@
         {% for review in reviews %}
         <h3>
             <a href="/thread/{{ review.thread_id }}">
-                {{review.title}}
+                {{ review.title }}
             </a>
         </h3>
-        <p>Rating: {{review.grade}}</p>
-        <p>Genres: {{review.genres}} </p>
-        <p> {{review.review}} </p>
+        <p>Rating: {{ review.grade }}</p>
+        <p>Genres: {{ review.genres }} </p>
+        <p> {{ review.review }} </p>
 
     {% endfor %}
 {% else %}

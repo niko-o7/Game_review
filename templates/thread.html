@@ -26,7 +26,8 @@
     <h3>Comments</h3>
     {% if "user_id" in session %}
     <form method="POST" action="/thread/{{ thread.thread_id }}/comment">
-        <textarea name="content" rows="5"></textarea>
+        <label for="content">Comment</label>:<br />
+        <textarea id="content" name="content" rows="5" maxlength="5000"></textarea>
         <button type="submit">Submit</button>
 
     </form>

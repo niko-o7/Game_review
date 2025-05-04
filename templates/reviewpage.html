@@ -6,9 +6,9 @@
 </head>
 {% for thread in threads %}
 <p>
-    <a href="/thread/{{thread.id}}"> {{ thread.title }} </a>
+    <a href="/thread/{{ thread.id }}"> {{ thread.title }} </a>
 
-    <strong>Genres</strong> {{thread.genres}}
+    <strong>Genres</strong> {{ thread.genres }}
     <strong>Rating</strong> {{ thread.grade }}
 
     <strong>Thoughts:</strong>
@@ -17,8 +17,8 @@
 </p>
 {% if thread.user_id == session.user_id %}
 <p>
-    <a href="/edit/{{thread.id}}">Edit</a>
-    <a href="/remove/{{thread.id}}">Remove</a>
+    <a href="/edit/{{ thread.id }}">Edit</a>
+    <a href="/remove/{{ thread.id }}">Remove</a>
 </p>
 {% endif %}
 <hr />
@@ -50,8 +50,8 @@
     </p>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
-        Review: <br />
-        <textarea name="review" rows="5" cols="40"></textarea>
+        <label for="review">Review</label>: <br />
+        <textarea name="review" rows="5" cols="40" maxlength="5000"></textarea>
 
     </p>
 
