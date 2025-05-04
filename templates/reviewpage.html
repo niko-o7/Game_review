@@ -2,76 +2,84 @@
 <html>
 
 <head>
-    <title>Game reviews</title>
+    <link rel="stylesheet" href="/static/main.css">
+    <div class="header">
+        <title>Game reviews</title>
+    </div>
 </head>
-{% for thread in threads %}
-<p>
-    <a href="/thread/{{ thread.id }}"> {{ thread.title }} </a>
-
-    <strong>Genres</strong> {{ thread.genres }}
-    <strong>Rating</strong> {{ thread.grade }}
-
-    <strong>Thoughts:</strong>
-    {{ thread.review }}
-
-</p>
-{% if thread.user_id == session.user_id %}
-<p>
-    <a href="/edit/{{ thread.id }}">Edit</a>
-    <a href="/remove/{{ thread.id }}">Remove</a>
-</p>
-{% endif %}
-<hr />
-{% endfor %}
-
-{% if session.user_id %}
-<h2>Post a review!</h2>
-<form action="/new_thread" method="post">
+<div class="threads">
+    {% for thread in threads %}
     <p>
-        Game name: <br />
-        <input type="text" name="title" />
-    </p>
-    <p>Game genre(s): <br /> </p>
-    <p>
-        <input type="checkbox" name="genres" value="fps" /> FPS
-        <input type="checkbox" name="genres" value="moba" /> Moba
-        <input type="checkbox" name="genres" value="horror" /> Horror
-        <input type="checkbox" name="genres" value="sandbox" /> Sandbox
-        <input type="checkbox" name="genres" value="singleplayer" /> Singleplayer
-        <input type="checkbox" name="genres" value="multiplayer" /> Multiplayer
-    </p>
-    <p>Grade: <br /> </p>
-    <p>
-        <input type="radio" name="grade" value="1" /> 1
-        <input type="radio" name="grade" value="2" /> 2
-        <input type="radio" name="grade" value="3" /> 3
-        <input type="radio" name="grade" value="4" /> 4
-        <input type="radio" name="grade" value="5" /> 5
-    </p>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <p>
-        <label for="review">Review</label>: <br />
-        <textarea name="review" rows="5" cols="40" maxlength="5000"></textarea>
+        <a href="/thread/{{ thread.id }}"> {{ thread.title }} </a>
+
+        <strong>Genres</strong> {{ thread.genres }}
+        <strong>Rating</strong> {{ thread.grade }}
+
+        <strong>Thoughts:</strong>
+        {{ thread.review }}
 
     </p>
+    {% if thread.user_id == session.user_id %}
+    <p>
+        <a href="/edit/{{ thread.id }}">Edit</a>
+        <a href="/remove/{{ thread.id }}">Remove</a>
+    </p>
+    {% endif %}
+    <hr />
+    {% endfor %}
+</div>
 
-    <input type="submit" value="Send" />
+<div class="post_review">
+    {% if session.user_id %}
+    <h2>Post a review!</h2>
+    <form action="/new_thread" method="post">
+        <p>
+            Game name: <br />
+            <input type="text" name="title" />
+        </p>
+        <p>Game genre(s): <br /> </p>
+        <p>
+            <input type="checkbox" name="genres" value="fps" /> FPS
+            <input type="checkbox" name="genres" value="moba" /> Moba
+            <input type="checkbox" name="genres" value="horror" /> Horror
+            <input type="checkbox" name="genres" value="sandbox" /> Sandbox
+            <input type="checkbox" name="genres" value="singleplayer" /> Singleplayer
+            <input type="checkbox" name="genres" value="multiplayer" /> Multiplayer
+        </p>
+        <p>Grade: <br /> </p>
+        <p>
+            <input type="radio" name="grade" value="1" /> 1
+            <input type="radio" name="grade" value="2" /> 2
+            <input type="radio" name="grade" value="3" /> 3
+            <input type="radio" name="grade" value="4" /> 4
+            <input type="radio" name="grade" value="5" /> 5
+        </p>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <p>
+            <label for="review">Review</label>: <br />
+            <textarea name="review" rows="5" cols="40" maxlength="5000"></textarea>
+
+        </p>
+
+        <input type="submit" value="Send" />
 
 </form>
+</div>
+<div class="search">
+    <form action="/search" method="get">
+        <p>
+            Review search:
+            {% if query %}
+            <input type="text" name="query" value="{{ query }}" />
+            {% else %}
+            <input type="text" name="query" />
+            {% endif %}
+        </p>
+        <input type="submit" value="Search" />
+    </form>
 
-<form action="/search" method="get">
-    <p>
-        Review search:
-        {% if query %}
-        <input type="text" name="query" value="{{ query }}" />
-        {% else %}
-        <input type="text" name="query" />
-        {% endif %}
-    </p>
-    <input type="submit" value="Search" />
-</form>
-
-{% if query %}
+    {% if query %}
+</div>
 <hr />
 <h2>Search results</h2>
 

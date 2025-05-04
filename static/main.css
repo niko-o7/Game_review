@@ -1,0 +1,30 @@
+body {
+    margin: auto;
+    max-width: 50em;
+    font-family: sans-serif;
+    background-color: lightslategrey;
+  }
+
+.header {
+    background-color: gray;
+    color: whitesmoke;
+}
+
+.threads {
+    background-color: darkslategrey;
+    color: whitesmoke;
+    font-family: sans-serif;
+    max-width: 60em;
+}
+
+.post_review {
+    background-color: grey;
+    color: whitesmoke;
+    max-width: 70em;
+}
+
+.search {
+    background-color: grey;
+    color: whitesmoke;
+
+}
